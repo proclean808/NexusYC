@@ -1,0 +1,367 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NexusYC — Powered by JoyceGPT</title>
+  <meta name="description" content="Hybrid Venture Builder v4.1 — single‑file, accessible, responsive dashboard." />
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --panel: #111825;
+      --panel-2: #0f1624;
+      --text: #e6edf3;
+      --muted: #aab6c6;
+      --card: #0f1624;
+      --border: #1e2a3a;
+      --accent: #00ffa3;   /* emerald neon for Joyce */
+      --brand: #38bdf8;    /* neon-ish blue for Nexus */
+      --yc: #ff7a00;       /* neon orange for YC */
+      --danger: #ff476c;
+      --warn: #ffb020;
+      --ok: #1fc77e;
+      --shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+      --radius: 16px;
+      --radius-sm: 12px;
+      --radius-lg: 24px;
+    }/* Light mode tokens */
+.light {
+  --bg: #f6f8fb;
+  --panel: #ffffff;
+  --panel-2: #ffffff;
+  --text: #0f172a;
+  --muted: #475569;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  --shadow: 0 6px 18px rgba(2, 8, 23, 0.08);
+}
+
+/* Base reset */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font: 15px/1.5 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+  background: radial-gradient(1200px 800px at 10% -10%, rgba(56,189,248,0.15), transparent 40%),
+              radial-gradient(900px 600px at 110% 10%, rgba(255,122,0,0.12), transparent 40%),
+              var(--bg);
+  color: var(--text);
+}
+
+a { color: var(--brand); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Layout */
+.skip-link { position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+.skip-link:focus { left: 12px; top: 12px; width: auto; height: auto; background: var(--yc); color: #000; padding: 8px 12px; border-radius: 8px; }
+
+header {
+  position: sticky; top: 0; z-index: 100;
+  background: linear-gradient(180deg, rgba(15,22,36,0.95) 0%, rgba(15,22,36,0.85) 100%);
+  backdrop-filter: saturate(1.2) blur(6px);
+  border-bottom: 1px solid var(--border);
+}
+.container { max-width: 1200px; margin: 0 auto; padding: 16px; }
+
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.tile {
+  width: 40px; height: 40px; border-radius: 10px; background:
+    linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0) 40%),
+    linear-gradient(180deg, rgba(255,255,255,0.06), rgba(0,0,0,0.25)),
+    linear-gradient(145deg, #0e1523, #0b0f14);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), var(--shadow);
+  display: grid; place-items: center; font-weight: 800; letter-spacing: 0.5px;
+  color: var(--text);
+}
+.tile .nexus { color: var(--brand); }
+.tile .yc { color: var(--yc); }
+
+.product-title { margin: 0; font-size: 18px; font-weight: 700; }
+.subtitle { margin: 0; font-size: 12px; color: var(--muted); }
+
+.actions { display: flex; gap: 8px; align-items: center; }
+.btn {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+.btn:hover { filter: brightness(1.05); }
+
+nav.primary {
+  display: grid; grid-auto-flow: column; gap: 8px; margin-top: 12px;
+  overflow-x: auto; padding-bottom: 6px;
+}
+.tab {
+  display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 999px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  white-space: nowrap; font-weight: 600; color: var(--text);
+}
+.tab[aria-current="page"] { outline: 2px solid var(--brand); }
+
+main { padding: 24px 0 48px; }
+
+/* Cards & grid */
+.grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
+.card {
+  grid-column: span 12;
+  background: linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 16px;
+  box-shadow: var(--shadow);
+}
+.card h2, .card h3 { margin: 0 0 10px; font-weight: 800; letter-spacing: 0.2px; }
+.muted { color: var(--muted); }
+
+/* KPI cards */
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; }
+.kpi { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; }
+.kpi .label { color: var(--muted); font-size: 12px; }
+.kpi .value { font-size: 24px; font-weight: 800; margin-top: 4px; }
+
+/* Progress bar */
+.progress-wrap { margin-top: 8px; }
+.progress {
+  height: 14px; border-radius: 999px; background: rgba(255,255,255,0.07); border: 1px solid var(--border); overflow: hidden;
+}
+.progress > span {
+  display: block; height: 100%; width: var(--pct, 0%);
+  background: linear-gradient(90deg, var(--brand), var(--accent));
+}
+.legend { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+.badge { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; padding: 6px 10px; border-radius: 999px; border: 1px solid var(--border); background: var(--panel);
+}
+.badge.ok { color: var(--ok); }
+.badge.warn { color: var(--warn); }
+.badge.todo { color: var(--muted); }
+
+/* Sections */
+.two-col { display: grid; grid-template-columns: 1fr; gap: 16px; }
+.list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.list li { padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--panel); }
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--border); }
+th { color: var(--muted); font-weight: 700; }
+
+/* Responsive */
+@media (min-width: 720px) {
+  .card { padding: 18px 20px; }
+  .two-col { grid-template-columns: 1.2fr 1fr; }
+  .grid .span-6 { grid-column: span 6; }
+  .grid .span-8 { grid-column: span 8; }
+  .grid .span-4 { grid-column: span 4; }
+}
+
+/* Motion-reduced hover */
+@media (prefers-reduced-motion: no-preference) {
+  .tab, .btn, .kpi, .list li { transition: transform .2s ease, filter .2s ease; }
+  .tab:hover, .btn:hover, .kpi:hover, .list li:hover { transform: translateY(-1px); }
+}
+
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header>
+    <div class="container">
+      <div class="topbar" role="banner">
+        <div class="brand" aria-label="Product">
+          <div class="tile" aria-hidden="true"><span class="nexus">Nexus</span><span class="yc">YC</span></div>
+          <div>
+            <p class="product-title">🧠 NexusYC powered by <span style="color:var(--accent);font-weight:900">JoyceGPT</span></p>
+            <p class="subtitle">Hybrid Venture Builder v4.1</p>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn" id="themeToggle" aria-pressed="false" aria-label="Toggle theme">Toggle Theme</button>
+          <a class="btn" href="#chat">Open JoyceGPT</a>
+        </div>
+      </div><nav class="primary" role="navigation" aria-label="Primary">
+    <a class="tab" href="#dashboard" aria-current="page">Dashboard</a>
+    <a class="tab" href="#chat">Chat with JoyceGPT</a>
+    <a class="tab" href="#metacollab">MetaCollab VR</a>
+    <a class="tab" href="#events">YC Events</a>
+    <a class="tab" href="#cofounder">Co‑Founder Match</a>
+    <a class="tab" href="#docs">Documents</a>
+  </nav>
+</div>
+
+  </header>  <main id="main" class="container" tabindex="-1">
+    <!-- Welcome / Overview -->
+    <section id="dashboard" class="grid" aria-label="Dashboard">
+      <div class="card span-8">
+        <h2>👋 Welcome back, <span id="userName">Jonathan</span></h2>
+        <p class="muted">Let’s accelerate your YC venture today. Current Batch: <strong id="batch">W24</strong>.</p><div class="kpis" role="group" aria-label="Portfolio KPIs">
+      <div class="kpi" aria-label="Active Projects">
+        <div class="label">Active Projects</div>
+        <div class="value" id="kpi-projects">7</div>
+      </div>
+      <div class="kpi" aria-label="Traction Updates">
+        <div class="label">Traction Updates</div>
+        <div class="value" id="kpi-updates">23</div>
+      </div>
+      <div class="kpi" aria-label="Pivot History">
+        <div class="label">Pivot History</div>
+        <div class="value" id="kpi-pivots">3</div>
+      </div>
+      <div class="kpi" aria-label="Documents Uploaded">
+        <div class="label">Documents</div>
+        <div class="value" id="kpi-docs">156</div>
+      </div>
+    </div>
+
+    <div class="progress-wrap" aria-label="Progress Tracker">
+      <h3>📊 Progress Tracker</h3>
+      <p class="muted" id="progressText">Overall Progress: <strong>73%</strong></p>
+      <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="73" aria-label="Overall progress">
+        <span style="--pct:73%"></span>
+      </div>
+      <div class="legend" role="list">
+        <div class="badge ok" role="listitem">✅ Idea Validation — Complete</div>
+        <div class="badge ok" role="listitem">✅ MVP Built — Complete</div>
+        <div class="badge warn" role="listitem">⏳ Pilot Testing — In Progress</div>
+        <div class="badge todo" role="listitem">🔲 Demo Day Prep — Pending</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card span-4">
+    <h3>🗓️ Next Milestones</h3>
+    <ul class="list">
+      <li><strong>Customer Pilot #2</strong> · 8 targeted interviews · <span class="muted">Due Aug 29</span></li>
+      <li><strong>Deck Iteration</strong> · story + metrics polish · <span class="muted">Due Sep 2</span></li>
+      <li><strong>Warm Intros</strong> · 5 investors · <span class="muted">Due Sep 6</span></li>
+    </ul>
+  </div>
+
+  <div class="card span-6">
+    <h3 id="chat">💬 Chat with JoyceGPT</h3>
+    <p class="muted">Inline sandbox. Wire to your backend when ready.</p>
+    <form aria-label="Chat input" onsubmit="return false;">
+      <label for="msg" class="muted">Message</label>
+      <textarea id="msg" rows="4" style="width:100%;border-radius:12px;border:1px solid var(--border);background:var(--panel);color:var(--text);padding:10px"></textarea>
+      <div style="margin-top:8px;display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn" type="reset">Clear</button>
+        <button class="btn" type="submit" id="sendBtn">Send</button>
+      </div>
+    </form>
+    <div id="chatLog" class="list" style="margin-top:10px; max-height:260px; overflow:auto" aria-live="polite"></div>
+    <div id="joycegpt5-embed" class="embed-wrap" aria-label="JoyceGPT-5 Embedded Widget" style="margin-top:12px">
+    <iframe id="joycegpt5-frame" title="JoyceGPT-5 chat widget" allow="clipboard-write; microphone" referrerpolicy="strict-origin-when-cross-origin" style="width:100%;height:420px;border:1px solid var(--border);border-radius:12px;background:var(--panel)"></iframe>
+    <noscript><p class="muted">Enable JavaScript to use the embedded JoyceGPT-5 chat.</p></noscript>
+    <p class="muted" style="margin-top:8px">Embedded widget. Replace configuration in the footer script with your API host, project, and user IDs.</p>
+  </div>
+  </div>
+
+  <div class="card span-6" id="metacollab">
+    <h3>🕶️ MetaCollab VR</h3>
+    <p class="muted">Bridge to collaborative XR sessions. Stub links below.</p>
+    <ul class="list">
+      <li>Launch Workspace Alpha · <a href="#">Open</a></li>
+      <li>Scene: Holographic OS Panels · <a href="#">Preview</a></li>
+      <li>Device Check · <a href="#">Run</a></li>
+    </ul>
+  </div>
+
+  <div class="card span-8" id="events">
+    <h3>📅 YC Events</h3>
+    <table role="table" aria-label="Upcoming events">
+      <thead>
+        <tr><th scope="col">Date</th><th scope="col">Event</th><th scope="col">Location</th><th scope="col">Status</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Aug 22</td><td>Batch Sync</td><td>HQ · Remote</td><td>Confirmed</td></tr>
+        <tr><td>Aug 27</td><td>Partner Office Hours</td><td>Remote</td><td>Pending</td></tr>
+        <tr><td>Sep 10</td><td>Demo Day Rehearsal</td><td>HQ</td><td>Tentative</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card span-4" id="cofounder">
+    <h3>🤝 Co‑Founder Match</h3>
+    <ul class="list">
+      <li><strong>A. Patel</strong> · Full‑stack · <span class="muted">Match 87%</span></li>
+      <li><strong>L. Nguyen</strong> · ML Ops · <span class="muted">Match 82%</span></li>
+      <li><strong>M. Chen</strong> · Product · <span class="muted">Match 79%</span></li>
+    </ul>
+  </div>
+
+  <div class="card span-12" id="docs">
+    <h3>📂 Documents</h3>
+    <ul class="list" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
+      <li>Investor Deck v7.pdf · <a href="#">Open</a></li>
+      <li>One‑Pager v3.docx · <a href="#">Open</a></li>
+      <li>Metrics.csv · <a href="#">Open</a></li>
+    </ul>
+  </div>
+</section>
+
+  </main>  <script>
+    // Persisted theme toggle
+    (function initTheme(){
+      const stored = localStorage.getItem('nx_theme');
+      if (stored === 'light') document.documentElement.classList.add('light');
+      document.getElementById('themeToggle').setAttribute('aria-pressed', stored === 'light');
+    })();
+
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      const root = document.documentElement;
+      const isLight = root.classList.toggle('light');
+      localStorage.setItem('nx_theme', isLight ? 'light' : 'dark');
+      document.getElementById('themeToggle').setAttribute('aria-pressed', isLight);
+    });
+
+    // Toy chat log for demo only
+    const chatLog = document.getElementById('chatLog');
+    document.getElementById('sendBtn').addEventListener('click', () => {
+      const msg = document.getElementById('msg');
+      const text = msg.value.trim();
+      if (!text) return;
+      appendBubble('You', text);
+      msg.value = '';
+      setTimeout(() => appendBubble('JoyceGPT', 'Acknowledged. Routing to the appropriate agent pipeline.'), 200);
+    });
+
+    function appendBubble(sender, text){
+      const li = document.createElement('div');
+      li.className = 'list-item';
+      li.style.padding = '10px 12px';
+      li.style.border = '1px solid var(--border)';
+      li.style.borderRadius = '10px';
+      li.style.background = 'var(--panel)';
+      li.innerHTML = `<strong>${sender}:</strong> <span class="muted">${escapeHtml(text)}</span>`;
+      chatLog.appendChild(li);
+      chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    function escapeHtml(str){
+      return str.replace(/[&<>"]/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[s]));
+    }
+  // JoyceGPT-5 Embed Loader (self-hostable)
+  (function(){
+    const JOYCE_BASE = 'https://joyce.example.com'; // TODO: replace with your deployment base URL
+    const PROJECT_ID = 'nx_yc';                     // TODO: replace with your project/workspace id
+    const USER_ID    = 'jonathan';                  // TODO: replace with runtime user id
+
+    function mountJoyceEmbed(){
+      const frame = document.getElementById('joycegpt5-frame');
+      if (!frame) return;
+      const theme = document.documentElement.classList.contains('light') ? 'light' : 'dark';
+      const qs = new URLSearchParams({ project: PROJECT_ID, user: USER_ID, theme });
+      frame.src = `${JOYCE_BASE}/embed?${qs.toString()}`;
+    }
+
+    // initial mount and sync with theme changes
+    mountJoyceEmbed();
+    const tgl = document.getElementById('themeToggle');
+    if (tgl) tgl.addEventListener('click', () => setTimeout(mountJoyceEmbed, 0));
+  })();
+</script></body>
+</html>
